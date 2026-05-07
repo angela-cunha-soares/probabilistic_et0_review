@@ -1,0 +1,13 @@
+# Ambientes virtuais
+venv/
+.env
+
+# Arquivos temporários e caches do Python
+__pycache__/
+*.pyc
+
+# Dados brutos muito grandes (opcional, mas recomendado se passar de 100MB)
+# data/raw/*.csv 
+
+# Configurações do pybliometrics (garante que sua API Key não vaze)
+.pybliometrics/
