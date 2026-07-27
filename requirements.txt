@@ -1,6 +1,20 @@
+# Núcleo de dados / análise
 pandas==2.2.0
-pybliometrics==3.5.2
-networkx==3.2.1
+numpy>=1.26
+pycountry==24.6.1
+
+# Figuras
 matplotlib==3.8.2
 seaborn==0.13.2
-pyvis==0.3.2
+networkx==3.2.1
+python-louvain==0.16      # detecção de comunidades na rede de autores
+pyvis==0.3.2              # rede de autores interativa (HTML)
+wordcloud>=1.9            # nuvem de palavras-chave
+squarify>=0.4            # treemap de palavras-chave
+plotly>=5.20             # Sankey (evolução temática)
+kaleido==0.2.1           # exportar o Sankey como PNG
+geopandas>=1.0           # mapas mundiais (coropléticos + colaboração)
+
+# Coleta
+requests==2.32.3
+pybliometrics==3.5.2      # Scopus (opcional; a coleta usa a API REST direta)

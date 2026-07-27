@@ -1,0 +1,164 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 750px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"group": 6, "id": "Liu Y.", "label": "Liu Y.", "shape": "dot", "value": 20}, {"group": 6, "id": "Wang W.", "label": "Wang W.", "shape": "dot", "value": 19}, {"group": 2, "id": "Senay G.B.", "label": "Senay G.B.", "shape": "dot", "value": 15}, {"group": 2, "id": "Kustas W.P.", "label": "Kustas W.P.", "shape": "dot", "value": 28}, {"group": 3, "id": "Forrest Melton", "label": "Forrest Melton", "shape": "dot", "value": 14}, {"group": 6, "id": "Liu S.", "label": "Liu S.", "shape": "dot", "value": 15}, {"group": 2, "id": "Irmak S.", "label": "Irmak S.", "shape": "dot", "value": 13}, {"group": 3, "id": "William P. Kustas", "label": "William P. Kustas", "shape": "dot", "value": 28}, {"group": 0, "id": "Er-Raki S.", "label": "Er-Raki S.", "shape": "dot", "value": 16}, {"group": 3, "id": "Christopher M. U. Neale", "label": "Christopher M. U. Neale", "shape": "dot", "value": 15}, {"group": 6, "id": "Tang R.", "label": "Tang R.", "shape": "dot", "value": 13}, {"group": 6, "id": "Wang X.", "label": "Wang X.", "shape": "dot", "value": 21}, {"group": 5, "id": "Salah Er\u2010Raki", "label": "Salah Er\u2010Raki", "shape": "dot", "value": 14}, {"group": 6, "id": "Li J.", "label": "Li J.", "shape": "dot", "value": 13}, {"group": 3, "id": "Yun Yang", "label": "Yun Yang", "shape": "dot", "value": 16}, {"group": 3, "id": "G. B. Senay", "label": "G. B. Senay", "shape": "dot", "value": 34}, {"group": 6, "id": "Zhang Y.", "label": "Zhang Y.", "shape": "dot", "value": 30}, {"group": 6, "id": "Li Z.L.", "label": "Li Z.L.", "shape": "dot", "value": 14}, {"group": 2, "id": "Allen R.G.", "label": "Allen R.G.", "shape": "dot", "value": 19}, {"group": 6, "id": "Zhang X.", "label": "Zhang X.", "shape": "dot", "value": 26}, {"group": 3, "id": "Christopher Hain", "label": "Christopher Hain", "shape": "dot", "value": 20}, {"group": 3, "id": "H\u00e9ctor Nieto", "label": "H\u00e9ctor Nieto", "shape": "dot", "value": 15}, {"group": 5, "id": "Gilles Boulet", "label": "Gilles Boulet", "shape": "dot", "value": 28}, {"group": 2, "id": "Anderson M.C.", "label": "Anderson M.C.", "shape": "dot", "value": 23}, {"group": 3, "id": "John Volk", "label": "John Volk", "shape": "dot", "value": 17}, {"group": 6, "id": "Wang J.", "label": "Wang J.", "shape": "dot", "value": 21}, {"group": 3, "id": "Charles Morton", "label": "Charles Morton", "shape": "dot", "value": 17}, {"group": 6, "id": "Chen H.", "label": "Chen H.", "shape": "dot", "value": 17}, {"group": 6, "id": "Chen X.", "label": "Chen X.", "shape": "dot", "value": 17}, {"group": 0, "id": "Ezzahar J.", "label": "Ezzahar J.", "shape": "dot", "value": 13}, {"group": 5, "id": "Albert Olioso", "label": "Albert Olioso", "shape": "dot", "value": 22}, {"group": 0, "id": "Olioso A.", "label": "Olioso A.", "shape": "dot", "value": 16}, {"group": 2, "id": "Gao F.", "label": "Gao F.", "shape": "dot", "value": 16}, {"group": 2, "id": "Trezza R.", "label": "Trezza R.", "shape": "dot", "value": 16}, {"group": 1, "id": "Pereira L.S.", "label": "Pereira L.S.", "shape": "dot", "value": 19}, {"group": 4, "id": "Jos\u00e9 L. Ch\u00e1vez", "label": "Jos\u00e9 L. Ch\u00e1vez", "shape": "dot", "value": 13}, {"group": 3, "id": "Feng Gao", "label": "Feng Gao", "shape": "dot", "value": 14}, {"group": 6, "id": "Li Y.", "label": "Li Y.", "shape": "dot", "value": 22}, {"group": 6, "id": "Wang Y.", "label": "Wang Y.", "shape": "dot", "value": 28}, {"group": 6, "id": "Li Z.", "label": "Li Z.", "shape": "dot", "value": 14}, {"group": 6, "id": "Wang H.", "label": "Wang H.", "shape": "dot", "value": 16}, {"group": 2, "id": "Neale C.M.U.", "label": "Neale C.M.U.", "shape": "dot", "value": 14}, {"group": 3, "id": "Martha C. Anderson", "label": "Martha C. Anderson", "shape": "dot", "value": 30}, {"group": 1, "id": "Paredes P.", "label": "Paredes P.", "shape": "dot", "value": 15}, {"group": 4, "id": "Prasanna H. Gowda", "label": "Prasanna H. Gowda", "shape": "dot", "value": 16}, {"group": 0, "id": "Boulet G.", "label": "Boulet G.", "shape": "dot", "value": 15}, {"group": 3, "id": "Justin Huntington", "label": "Justin Huntington", "shape": "dot", "value": 14}, {"group": 5, "id": "Lionel Jarlan", "label": "Lionel Jarlan", "shape": "dot", "value": 12}, {"group": 0, "id": "Khabba S.", "label": "Khabba S.", "shape": "dot", "value": 13}, {"group": 4, "id": "Suat Irmak", "label": "Suat Irmak", "shape": "dot", "value": 14}, {"group": 0, "id": "Mallick K.", "label": "Mallick K.", "shape": "dot", "value": 13}, {"group": 3, "id": "W.G.M. Bastiaanssen", "label": "W.G.M. Bastiaanssen", "shape": "dot", "value": 14}, {"group": 2, "id": "Allen R.", "label": "Allen R.", "shape": "dot", "value": 14}, {"group": 6, "id": "Li H.", "label": "Li H.", "shape": "dot", "value": 13}, {"group": 2, "id": "Nieto H.", "label": "Nieto H.", "shape": "dot", "value": 20}, {"group": 6, "id": "Li X.", "label": "Li X.", "shape": "dot", "value": 22}, {"group": 3, "id": "Richard G. Allen", "label": "Richard G. Allen", "shape": "dot", "value": 25}, {"group": 2, "id": "Yang Y.", "label": "Yang Y.", "shape": "dot", "value": 26}, {"group": 6, "id": "Wang Z.", "label": "Wang Z.", "shape": "dot", "value": 20}]);
+                  edges = new vis.DataSet([{"from": "Liu Y.", "to": "Chen H.", "value": 2}, {"from": "Liu Y.", "to": "Liu S.", "value": 1}, {"from": "Liu Y.", "to": "Wang Y.", "value": 1}, {"from": "Liu Y.", "to": "Chen X.", "value": 1}, {"from": "Liu Y.", "to": "Yang Y.", "value": 1}, {"from": "Liu Y.", "to": "Paredes P.", "value": 1}, {"from": "Liu Y.", "to": "Pereira L.S.", "value": 1}, {"from": "Liu Y.", "to": "Wang X.", "value": 1}, {"from": "Liu Y.", "to": "Zhang Y.", "value": 1}, {"from": "Liu Y.", "to": "Li J.", "value": 1}, {"from": "Wang W.", "to": "Wang X.", "value": 3}, {"from": "Wang W.", "to": "Li Y.", "value": 2}, {"from": "Wang W.", "to": "Wang J.", "value": 2}, {"from": "Wang W.", "to": "Zhang Y.", "value": 2}, {"from": "Wang W.", "to": "Zhang X.", "value": 1}, {"from": "Wang W.", "to": "Li X.", "value": 1}, {"from": "Wang W.", "to": "Liu S.", "value": 1}, {"from": "Wang W.", "to": "Li J.", "value": 1}, {"from": "Wang W.", "to": "Chen X.", "value": 1}, {"from": "Senay G.B.", "to": "Allen R.G.", "value": 1}, {"from": "Senay G.B.", "to": "Yang Y.", "value": 2}, {"from": "Senay G.B.", "to": "Allen R.", "value": 1}, {"from": "Kustas W.P.", "to": "Nieto H.", "value": 7}, {"from": "Kustas W.P.", "to": "Anderson M.C.", "value": 18}, {"from": "Kustas W.P.", "to": "Gao F.", "value": 10}, {"from": "Kustas W.P.", "to": "Yang Y.", "value": 3}, {"from": "Kustas W.P.", "to": "Neale C.M.U.", "value": 2}, {"from": "Kustas W.P.", "to": "Zhang Y.", "value": 1}, {"from": "Kustas W.P.", "to": "Irmak S.", "value": 1}, {"from": "Kustas W.P.", "to": "Allen R.G.", "value": 1}, {"from": "Kustas W.P.", "to": "Allen R.", "value": 1}, {"from": "Forrest Melton", "to": "Charles Morton", "value": 7}, {"from": "Forrest Melton", "to": "John Volk", "value": 10}, {"from": "Forrest Melton", "to": "Justin Huntington", "value": 7}, {"from": "Forrest Melton", "to": "G. B. Senay", "value": 5}, {"from": "Forrest Melton", "to": "Martha C. Anderson", "value": 7}, {"from": "Forrest Melton", "to": "Yun Yang", "value": 6}, {"from": "Forrest Melton", "to": "Richard G. Allen", "value": 4}, {"from": "Forrest Melton", "to": "William P. Kustas", "value": 2}, {"from": "Forrest Melton", "to": "Christopher Hain", "value": 3}, {"from": "Forrest Melton", "to": "Feng Gao", "value": 2}, {"from": "Forrest Melton", "to": "H\u00e9ctor Nieto", "value": 1}, {"from": "Liu S.", "to": "Chen X.", "value": 1}, {"from": "Liu S.", "to": "Li J.", "value": 1}, {"from": "Liu S.", "to": "Wang J.", "value": 1}, {"from": "Liu S.", "to": "Zhang Y.", "value": 1}, {"from": "Liu S.", "to": "Zhang X.", "value": 1}, {"from": "Liu S.", "to": "Wang Z.", "value": 2}, {"from": "Liu S.", "to": "Li Y.", "value": 1}, {"from": "Irmak S.", "to": "Neale C.M.U.", "value": 1}, {"from": "William P. Kustas", "to": "Christopher Hain", "value": 8}, {"from": "William P. Kustas", "to": "Feng Gao", "value": 10}, {"from": "William P. Kustas", "to": "Martha C. Anderson", "value": 13}, {"from": "William P. Kustas", "to": "Yun Yang", "value": 7}, {"from": "William P. Kustas", "to": "H\u00e9ctor Nieto", "value": 8}, {"from": "William P. Kustas", "to": "G. B. Senay", "value": 1}, {"from": "William P. Kustas", "to": "John Volk", "value": 1}, {"from": "William P. Kustas", "to": "Justin Huntington", "value": 1}, {"from": "William P. Kustas", "to": "Richard G. Allen", "value": 1}, {"from": "William P. Kustas", "to": "Christopher M. U. Neale", "value": 3}, {"from": "William P. Kustas", "to": "Gilles Boulet", "value": 1}, {"from": "William P. Kustas", "to": "Jos\u00e9 L. Ch\u00e1vez", "value": 1}, {"from": "Er-Raki S.", "to": "Boulet G.", "value": 5}, {"from": "Er-Raki S.", "to": "Ezzahar J.", "value": 13}, {"from": "Er-Raki S.", "to": "Khabba S.", "value": 11}, {"from": "Er-Raki S.", "to": "Olioso A.", "value": 1}, {"from": "Christopher M. U. Neale", "to": "Jos\u00e9 L. Ch\u00e1vez", "value": 2}, {"from": "Christopher M. U. Neale", "to": "G. B. Senay", "value": 3}, {"from": "Christopher M. U. Neale", "to": "Martha C. Anderson", "value": 1}, {"from": "Christopher M. U. Neale", "to": "Richard G. Allen", "value": 1}, {"from": "Tang R.", "to": "Li Z.L.", "value": 10}, {"from": "Tang R.", "to": "Li Z.", "value": 1}, {"from": "Tang R.", "to": "Zhang X.", "value": 2}, {"from": "Tang R.", "to": "Wang H.", "value": 1}, {"from": "Wang X.", "to": "Wang Z.", "value": 2}, {"from": "Wang X.", "to": "Zhang X.", "value": 2}, {"from": "Wang X.", "to": "Wang H.", "value": 2}, {"from": "Wang X.", "to": "Li Y.", "value": 1}, {"from": "Wang X.", "to": "Zhang Y.", "value": 2}, {"from": "Wang X.", "to": "Chen X.", "value": 1}, {"from": "Wang X.", "to": "Li X.", "value": 1}, {"from": "Wang X.", "to": "Li Z.", "value": 1}, {"from": "Wang X.", "to": "Gao F.", "value": 1}, {"from": "Salah Er\u2010Raki", "to": "Gilles Boulet", "value": 7}, {"from": "Salah Er\u2010Raki", "to": "Lionel Jarlan", "value": 8}, {"from": "Salah Er\u2010Raki", "to": "Albert Olioso", "value": 3}, {"from": "Li J.", "to": "Chen X.", "value": 3}, {"from": "Li J.", "to": "Wang J.", "value": 2}, {"from": "Li J.", "to": "Wang Z.", "value": 1}, {"from": "Li J.", "to": "Li H.", "value": 1}, {"from": "Li J.", "to": "Li X.", "value": 1}, {"from": "Yun Yang", "to": "G. B. Senay", "value": 4}, {"from": "Yun Yang", "to": "John Volk", "value": 7}, {"from": "Yun Yang", "to": "Martha C. Anderson", "value": 14}, {"from": "Yun Yang", "to": "Christopher Hain", "value": 10}, {"from": "Yun Yang", "to": "Feng Gao", "value": 10}, {"from": "Yun Yang", "to": "Charles Morton", "value": 3}, {"from": "Yun Yang", "to": "H\u00e9ctor Nieto", "value": 3}, {"from": "Yun Yang", "to": "Justin Huntington", "value": 2}, {"from": "Yun Yang", "to": "Richard G. Allen", "value": 2}, {"from": "G. B. Senay", "to": "John Volk", "value": 5}, {"from": "G. B. Senay", "to": "Martha C. Anderson", "value": 6}, {"from": "G. B. Senay", "to": "Justin Huntington", "value": 3}, {"from": "G. B. Senay", "to": "Richard G. Allen", "value": 4}, {"from": "G. B. Senay", "to": "Prasanna H. Gowda", "value": 2}, {"from": "G. B. Senay", "to": "Charles Morton", "value": 2}, {"from": "G. B. Senay", "to": "Christopher Hain", "value": 1}, {"from": "Zhang Y.", "to": "Wang Y.", "value": 4}, {"from": "Zhang Y.", "to": "Zhang X.", "value": 2}, {"from": "Zhang Y.", "to": "Li X.", "value": 3}, {"from": "Zhang Y.", "to": "Li Y.", "value": 1}, {"from": "Zhang Y.", "to": "Wang J.", "value": 2}, {"from": "Zhang Y.", "to": "Anderson M.C.", "value": 1}, {"from": "Zhang Y.", "to": "Yang Y.", "value": 2}, {"from": "Li Z.L.", "to": "Zhang X.", "value": 2}, {"from": "Li Z.L.", "to": "Wang H.", "value": 1}, {"from": "Allen R.G.", "to": "Trezza R.", "value": 8}, {"from": "Allen R.G.", "to": "Yang Y.", "value": 1}, {"from": "Allen R.G.", "to": "Anderson M.C.", "value": 1}, {"from": "Allen R.G.", "to": "Pereira L.S.", "value": 2}, {"from": "Zhang X.", "to": "Wang Y.", "value": 3}, {"from": "Zhang X.", "to": "Li H.", "value": 1}, {"from": "Zhang X.", "to": "Wang H.", "value": 1}, {"from": "Zhang X.", "to": "Li Y.", "value": 1}, {"from": "Zhang X.", "to": "Chen X.", "value": 1}, {"from": "Christopher Hain", "to": "Feng Gao", "value": 10}, {"from": "Christopher Hain", "to": "Martha C. Anderson", "value": 17}, {"from": "Christopher Hain", "to": "Charles Morton", "value": 3}, {"from": "Christopher Hain", "to": "John Volk", "value": 3}, {"from": "Christopher Hain", "to": "H\u00e9ctor Nieto", "value": 3}, {"from": "Christopher Hain", "to": "Justin Huntington", "value": 1}, {"from": "Christopher Hain", "to": "Richard G. Allen", "value": 1}, {"from": "H\u00e9ctor Nieto", "to": "Feng Gao", "value": 4}, {"from": "H\u00e9ctor Nieto", "to": "Martha C. Anderson", "value": 3}, {"from": "Gilles Boulet", "to": "Albert Olioso", "value": 19}, {"from": "Gilles Boulet", "to": "Lionel Jarlan", "value": 6}, {"from": "Anderson M.C.", "to": "Gao F.", "value": 9}, {"from": "Anderson M.C.", "to": "Yang Y.", "value": 5}, {"from": "Anderson M.C.", "to": "Neale C.M.U.", "value": 2}, {"from": "Anderson M.C.", "to": "Nieto H.", "value": 3}, {"from": "Anderson M.C.", "to": "Li Y.", "value": 1}, {"from": "John Volk", "to": "Charles Morton", "value": 12}, {"from": "John Volk", "to": "Justin Huntington", "value": 9}, {"from": "John Volk", "to": "Martha C. Anderson", "value": 7}, {"from": "John Volk", "to": "Feng Gao", "value": 3}, {"from": "John Volk", "to": "Richard G. Allen", "value": 4}, {"from": "Wang J.", "to": "Chen X.", "value": 2}, {"from": "Wang J.", "to": "Li Y.", "value": 2}, {"from": "Wang J.", "to": "Wang Z.", "value": 1}, {"from": "Wang J.", "to": "Li X.", "value": 3}, {"from": "Wang J.", "to": "Wang Y.", "value": 1}, {"from": "Wang J.", "to": "Yang Y.", "value": 1}, {"from": "Wang J.", "to": "Li H.", "value": 1}, {"from": "Wang J.", "to": "Wang H.", "value": 1}, {"from": "Charles Morton", "to": "Justin Huntington", "value": 11}, {"from": "Charles Morton", "to": "Richard G. Allen", "value": 4}, {"from": "Charles Morton", "to": "Feng Gao", "value": 2}, {"from": "Charles Morton", "to": "Martha C. Anderson", "value": 2}, {"from": "Chen H.", "to": "Li Y.", "value": 2}, {"from": "Chen H.", "to": "Wang Y.", "value": 1}, {"from": "Chen H.", "to": "Li H.", "value": 3}, {"from": "Chen H.", "to": "Wang H.", "value": 1}, {"from": "Chen H.", "to": "Li Z.", "value": 1}, {"from": "Chen X.", "to": "Li X.", "value": 2}, {"from": "Chen X.", "to": "Li Y.", "value": 1}, {"from": "Chen X.", "to": "Wang Z.", "value": 1}, {"from": "Chen X.", "to": "Li Z.", "value": 1}, {"from": "Ezzahar J.", "to": "Boulet G.", "value": 3}, {"from": "Ezzahar J.", "to": "Khabba S.", "value": 10}, {"from": "Albert Olioso", "to": "Lionel Jarlan", "value": 2}, {"from": "Olioso A.", "to": "Boulet G.", "value": 9}, {"from": "Olioso A.", "to": "Mallick K.", "value": 3}, {"from": "Gao F.", "to": "Yang Y.", "value": 4}, {"from": "Gao F.", "to": "Nieto H.", "value": 4}, {"from": "Gao F.", "to": "Li H.", "value": 1}, {"from": "Gao F.", "to": "Li Y.", "value": 1}, {"from": "Trezza R.", "to": "Allen R.", "value": 6}, {"from": "Pereira L.S.", "to": "Paredes P.", "value": 13}, {"from": "Pereira L.S.", "to": "Wang H.", "value": 1}, {"from": "Jos\u00e9 L. Ch\u00e1vez", "to": "Prasanna H. Gowda", "value": 3}, {"from": "Feng Gao", "to": "Martha C. Anderson", "value": 12}, {"from": "Li Y.", "to": "Wang H.", "value": 2}, {"from": "Li Y.", "to": "Li X.", "value": 2}, {"from": "Li Y.", "to": "Wang Y.", "value": 3}, {"from": "Li Y.", "to": "Li H.", "value": 1}, {"from": "Li Y.", "to": "Wang Z.", "value": 1}, {"from": "Wang Y.", "to": "Li H.", "value": 1}, {"from": "Wang Y.", "to": "Li Z.", "value": 1}, {"from": "Wang Y.", "to": "Li X.", "value": 1}, {"from": "Wang Y.", "to": "Wang H.", "value": 1}, {"from": "Wang Y.", "to": "Wang Z.", "value": 1}, {"from": "Li Z.", "to": "Wang H.", "value": 1}, {"from": "Li Z.", "to": "Yang Y.", "value": 1}, {"from": "Li Z.", "to": "Li X.", "value": 1}, {"from": "Wang H.", "to": "Paredes P.", "value": 1}, {"from": "Wang H.", "to": "Li H.", "value": 1}, {"from": "Wang H.", "to": "Li X.", "value": 1}, {"from": "Martha C. Anderson", "to": "Justin Huntington", "value": 3}, {"from": "Martha C. Anderson", "to": "Richard G. Allen", "value": 4}, {"from": "Prasanna H. Gowda", "to": "Suat Irmak", "value": 1}, {"from": "Boulet G.", "to": "Khabba S.", "value": 1}, {"from": "Boulet G.", "to": "Mallick K.", "value": 3}, {"from": "Justin Huntington", "to": "Richard G. Allen", "value": 6}, {"from": "W.G.M. Bastiaanssen", "to": "Richard G. Allen", "value": 5}, {"from": "Allen R.", "to": "Yang Y.", "value": 1}, {"from": "Li H.", "to": "Yang Y.", "value": 1}, {"from": "Li H.", "to": "Wang Z.", "value": 1}, {"from": "Nieto H.", "to": "Yang Y.", "value": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
