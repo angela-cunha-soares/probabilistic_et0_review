@@ -1,21 +1,41 @@
-# Ambientes virtuais
+# ---------------------------------------------------------------------------
+# Ambientes virtuais (todos os nomes usados no projeto)
+# ---------------------------------------------------------------------------
 venv/
+.venv/
+.venv-1/
+env/
 .env
-.venv-1
 
-# Arquivos temporários e caches do Python
+# ---------------------------------------------------------------------------
+# Caches e temporários do Python
+# ---------------------------------------------------------------------------
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
 
-# Dados brutos muito grandes (opcional, mas recomendado se passar de 100MB)
-# data/raw/*.csv 
-
-# Configurações do pybliometrics (garante que sua API Key não vaze)
+# ---------------------------------------------------------------------------
+# Segredos / credenciais (garante que nenhuma API key vaze)
+# ---------------------------------------------------------------------------
 .pybliometrics/
+*.key
+secrets.*
 
-# Prévia do artigo em latex:
-EDITOR_PITCH.md
-MANUSCRIPT_DRAFT.md
-MANUSCRIPT_OUTLINE.md
-SEARCH_TERMS.md
-WOS_EXPORT_GUIDE.md
+# ---------------------------------------------------------------------------
+# Dados brutos muito grandes: NÃO versione os CSV pesados, mas MANTENHA o
+# manifesto (é a evidência da data de busca do PRISMA) e os READMEs das pastas.
+# ---------------------------------------------------------------------------
+data/raw/*.csv
+data/raw/*.cursor
+data/raw/**/*.bib
+data/raw/**/*.ris
+data/processed/*.csv
+!data/raw/_manifest.json
+!data/raw/**/README*
+
+# ---------------------------------------------------------------------------
+# Saídas pesadas de figuras (regeneráveis); mantenha tabelas e queries (leves,
+# úteis como evidência da estratégia de busca).
+# ---------------------------------------------------------------------------
+results/figures/*.html

@@ -47,6 +47,7 @@ CONTACT_EMAIL = os.environ.get("CONTACT_EMAIL", "angelassilviane@gmail.com")
 SCOPUS_API_KEY = os.environ.get("SCOPUS_API_KEY")
 WOS_API_KEY = os.environ.get("WOS_API_KEY")
 S2_API_KEY = os.environ.get("S2_API_KEY")
+IEEE_API_KEY = os.environ.get("IEEE_API_KEY")  # IEEE Xplore Metadata Search
 
 # ----------------------------------------------------------------------
 # Blocos de termos de busca
@@ -56,7 +57,7 @@ S2_API_KEY = os.environ.get("S2_API_KEY")
 CORE_ET0 = [
     "evapotranspiration", "reference evapotranspiration", "ET0", "ETo",
     "potential evapotranspiration", "actual evapotranspiration",
-    "crop water requirement",
+    "maximum evapotranspiration", "crop water requirement",
 ]
 CORE_IRRIGATION = [
     "irrigation scheduling", "irrigation depth", "soil water balance",
@@ -87,6 +88,13 @@ TOOL_TYPES = [
     "R package", "python package", "open-source", "open source software",
     "software package", "computer program", "toolbox", "toolkit",
     "desktop software",
+    # frameworks / modelos de método (captura artigos de método/ML de ET0)
+    "framework", "probabilistic model",
+    # abordagens de IA / aprendizado de máquina (vocabulário Skhiri et al. 2024)
+    "machine learning", "deep learning", "neural network",
+    "artificial neural network", "support vector machine", "genetic algorithm",
+    "decision tree", "neuro-fuzzy", "reinforcement learning", "random forest",
+    "extreme gradient boosting", "gaussian process",
 ]
 # Nomes de ferramentas/softwares conhecidos de ET.
 NAMED_TOOLS = [
@@ -148,6 +156,38 @@ NONDET_METHODS = [
     # assimilação / fusão de dados (Kalman etc.) — abordagens não-determinísticas
     "kalman", "data assimilation", "data fusion", "state-space", "state space",
     "particle filter",
+    # técnicas de IA adicionais (Skhiri et al. 2024)
+    "decision tree", "reinforcement learning", "neuro-fuzzy", "neuro fuzzy",
+    "anfis", "extreme gradient boosting", "xgboost", "catboost",
+]
+
+# ----------------------------------------------------------------------
+# Taxonomia de TÉCNICA DE IA (só para documentos não-determinísticos).
+# Reproduz a distribuição de técnicas de Skhiri et al. (2024, Fig. 10).
+# ----------------------------------------------------------------------
+AI_TECHNIQUES = [
+    ("Deep learning",
+     ["deep learning", "lstm", "convolutional", "cnn", "recurrent neural",
+      "gru", "transformer", "deep neural"]),
+    ("Support vector machine",
+     ["support vector", "svm", "svr", "relevance vector"]),
+    ("Tree ensembles (RF/boosting)",
+     ["random forest", "xgboost", "extreme gradient boosting", "gradient boosting",
+      "catboost", "lightgbm", "decision tree", "boosted", "bagging"]),
+    ("Neuro-fuzzy / fuzzy",
+     ["neuro-fuzzy", "neuro fuzzy", "anfis", "fuzzy"]),
+    ("Genetic / evolutionary / swarm",
+     ["genetic algorithm", "genetic programming", "evolutionary", "particle swarm",
+      "metaheuristic", "gene expression programming"]),
+    ("Gaussian process / kernel",
+     ["gaussian process", "kernel extreme"]),
+    ("Reinforcement learning",
+     ["reinforcement learning"]),
+    ("Artificial neural network (ANN)",
+     ["artificial neural network", "neural network", "multilayer perceptron",
+      "radial basis", "extreme learning machine", "generalized regression"]),
+    ("Machine learning (general)",
+     ["machine learning", "ensemble learning", "data-driven"]),
 ]
 
 # ----------------------------------------------------------------------
@@ -169,6 +209,31 @@ BLOCK_B = {
 }
 
 BLOCKS = [BLOCK_A, BLOCK_B]
+
+# ----------------------------------------------------------------------
+# Filtro de ESCOPO por periódico: descarta revistas médicas/fora de escopo.
+# Um documento é excluído se o nome da revista contém um termo médico E NÃO
+# contém nenhum termo agrícola/ambiental (evita falso positivo tipo
+# "Agriculture and Veterinary Science").
+# ----------------------------------------------------------------------
+MED_JOURNAL_TERMS = [
+    "medical", "medicine", "clinical", "cancer", "oncolog", "surg",
+    "pharmaceutic", "pharmacol", "hospital", "nursing", "dental", "psychiatr",
+    "cardiol", "immunol", "hepat", "gastro", "pediatr", "obstet", "veterinary",
+    "epidemiol", "biomedical", "entomology",
+]
+MED_SAFE_TERMS = [
+    "agricultur", "water", "irrig", "environ", "hydrol", "crop", "climate",
+    "soil", "remote sensing", "meteorol", "geoscience", "earth",
+]
+
+# Servidores de preprint / repositórios (não são revistas revisadas por pares).
+PREPRINT_VENUE_TERMS = [
+    "ssrn", "zenodo", "la referencia", "research square", "preprints.org",
+    "arxiv", "biorxiv", "medrxiv", "techrxiv", "chemrxiv", "figshare",
+    "authorea", "osf.io", "preprint", "repositor",
+    "social science research network",
+]
 
 # Contraste macro (Tier 1): determinístico vs probabilístico (só volume)
 MACRO_DETERMINISTIC = (

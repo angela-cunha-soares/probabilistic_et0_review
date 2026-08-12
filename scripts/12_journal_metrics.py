@@ -28,8 +28,8 @@ def fetch_metrics(issns):
     """Consulta OpenAlex Sources por ISSN, em lotes."""
     rows = {}
     issns = [i for i in issns if i]
-    for k in range(0, len(issns), 50):
-        batch = issns[k:k + 50]
+    for k in range(0, len(issns), 100):
+        batch = issns[k:k + 100]
         filt = "issn:" + "|".join(batch)
         url = (f"https://api.openalex.org/sources?filter={urllib.parse.quote(filt)}"
                f"&per-page=200&mailto={CONTACT_EMAIL}")
@@ -52,8 +52,10 @@ def fetch_metrics(issns):
 def main():
     df = pd.read_csv(CORPUS, dtype=str)
     df["issn"] = df["issn"].fillna("").astype(str)
-    issns = sorted({i.strip() for i in df["issn"] if i.strip()})
-    print(f"[Journal] consultando {len(issns)} ISSNs no OpenAlex...")
+    # só busca métricas de periódicos com pelo menos MIN_DOCS documentos no corpus
+    freq = df[df["issn"] != ""]["issn"].value_counts()
+    issns = sorted(freq[freq >= MIN_DOCS].index)
+    print(f"[Journal] consultando {len(issns)} ISSNs (>= {MIN_DOCS} docs) no OpenAlex...")
     metrics = fetch_metrics(issns)
 
     m = pd.DataFrame.from_dict(metrics, orient="index").rename_axis("issn").reset_index()

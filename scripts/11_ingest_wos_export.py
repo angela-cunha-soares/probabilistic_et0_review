@@ -16,21 +16,37 @@ import glob
 import pandas as pd
 
 from config import RAW_DIR
-from lib_sources import UNIFIED_COLS
+from lib_sources import UNIFIED_COLS, normalize_doctype
 
 EXPORT_DIR = os.path.join(RAW_DIR, "wos_export")
 
+_ISO_CACHE = {}
+# nomes de país como aparecem na WoS que o lookup direto não resolve
+_WOS_FIX = {
+    "usa": "US", "united states": "US", "u arab emirates": "AE",
+    "peoples r china": "CN", "china": "CN", "england": "GB", "scotland": "GB",
+    "wales": "GB", "north ireland": "GB", "u k": "GB", "south korea": "KR",
+    "russia": "RU", "iran": "IR", "vietnam": "VN", "taiwan": "TW",
+    "czech republic": "CZ", "byelarus": "BY", "trinid & tobago": "TT",
+    "bosnia & herceg": "BA", "cote ivoire": "CI", "dem rep congo": "CD",
+}
 try:
     import pycountry
+
     def to_iso2(name):
-        try:
-            return pycountry.countries.lookup(name.strip()).alpha_2
-        except Exception:
+        key = (name or "").strip().lower().rstrip(".")
+        if not key:
+            return None
+        if key in _ISO_CACHE:
+            return _ISO_CACHE[key]
+        res = _WOS_FIX.get(key)
+        if res is None:
             try:
-                m = pycountry.countries.search_fuzzy(name.strip())
-                return m[0].alpha_2 if m else None
+                res = pycountry.countries.lookup(key).alpha_2
             except Exception:
-                return None
+                res = None
+        _ISO_CACHE[key] = res
+        return res
 except ImportError:
     def to_iso2(name):
         return None
@@ -105,7 +121,7 @@ def parse_ris(path):
     rows = []
     for r in recs:
         rows.append({
-            "id": r.get("UT", r.get("DO", "")), "source": "wos",
+            "id": r.get("UT") or r.get("AN") or r.get("DO", ""), "source": "wos",
             "doi": r.get("DO", ""), "title": r.get("TI", r.get("T1", "")),
             "abstract": r.get("AB", ""),
             "year": pd.to_numeric(r.get("PY", ""), errors="coerce"),
@@ -115,6 +131,111 @@ def parse_ris(path):
             "cited_by_count": pd.to_numeric(r.get("Z9", r.get("TC", "0")),
                                             errors="coerce") or 0,
             "keywords": "; ".join(r.get("kw", [])), "block": "",
+        })
+    return pd.DataFrame(rows)
+
+
+def _bib_fields(body):
+    """Extrai os campos de um corpo de entrada BibTeX (uma passada, rápido)."""
+    import re as _re
+    fields, pos, L = {}, 0, len(body)
+    c = body.find(",")
+    pos = c + 1 if c >= 0 else 0          # pula a chave de citação
+    while pos < L:
+        eq = body.find("=", pos)
+        if eq < 0:
+            break
+        name = body[pos:eq].strip().lower()
+        v = eq + 1
+        while v < L and body[v] in " \t\r\n":
+            v += 1
+        if v >= L:
+            break
+        if body[v] == "{":
+            depth, s = 0, v
+            while v < L:
+                if body[v] == "{":
+                    depth += 1
+                elif body[v] == "}":
+                    depth -= 1
+                    if depth == 0:
+                        break
+                v += 1
+            value = body[s + 1:v]
+            pos = v + 1
+        elif body[v] == '"':
+            s = v + 1
+            v = s
+            while v < L and body[v] != '"':
+                v += 1
+            value = body[s:v]
+            pos = v + 1
+        else:
+            s = v
+            while v < L and body[v] not in ",\n":
+                v += 1
+            value = body[s:v].strip()
+            pos = v
+        nc = body.find(",", pos)
+        pos = nc + 1 if nc >= 0 else L
+        if name:
+            fields[name] = _re.sub(r"\s+", " ", value).strip()
+    return fields
+
+
+def _wos_countries(aff_singular):
+    """No BibTeX da WoS, o campo 'Affiliation' (singular) traz endereços completos
+    separados por '.', cada um terminando em ', País'. Extrai os países -> ISO."""
+    iso = set()
+    for chunk in str(aff_singular).split("."):
+        parts = [p.strip() for p in chunk.split(",") if p.strip()]
+        if parts:
+            code = to_iso2(parts[-1])
+            if code:
+                iso.add(code)
+    return ";".join(sorted(iso))
+
+
+def parse_bib(path):
+    """BibTeX da WoS (Full Record): traz Keywords, Affiliations e Times-Cited,
+    que o RIS omite. Parser manual (rápido)."""
+    import re as _re
+    text = open(path, encoding="utf-8-sig", errors="ignore").read()
+    rows, n = [], len(text)
+    starts = [m.start() for m in _re.finditer(r"(?m)^@\w+\s*\{", text)]
+    for k, at in enumerate(starts):
+        br = text.find("{", at)
+        depth, j = 0, br
+        while j < n:
+            if text[j] == "{":
+                depth += 1
+            elif text[j] == "}":
+                depth -= 1
+                if depth == 0:
+                    break
+            j += 1
+        e = _bib_fields(text[br + 1:j])
+        if not e.get("title"):
+            continue
+        insts = e.get("affiliations", "")   # plural = nomes de instituição
+        tc = "".join(c for c in e.get("times-cited", "") if c.isdigit())
+        rows.append({
+            "id": e.get("unique-id", "") or e.get("doi", ""), "source": "wos",
+            "doi": e.get("doi", ""),
+            "title": e.get("title", "").replace("{", "").replace("}", ""),
+            "abstract": e.get("abstract", ""),
+            "year": pd.to_numeric(e.get("year", ""), errors="coerce"),
+            "venue": e.get("journal", "") or e.get("journal-iso", ""),
+            "authors": "; ".join(a.strip() for a in e.get("author", "").split(" and ")),
+            "institutions": "; ".join(x.strip() for x in insts.split(";") if x.strip()),
+            "country_codes": _wos_countries(e.get("affiliation", "")),
+            "cited_by_count": int(tc) if tc else 0,
+            "is_oa": "", "oa_status": "",
+            "issn": e.get("issn", "") or e.get("eissn", ""),
+            "field": e.get("research-areas", ""),
+            "doc_type": normalize_doctype(e.get("type", "")),
+            "keywords": e.get("keywords", "") or e.get("keywords-plus", ""),
+            "block": "",
         })
     return pd.DataFrame(rows)
 
@@ -130,11 +251,19 @@ def main():
     for f in files:
         try:
             head = open(f, encoding="utf-8-sig", errors="ignore").read(400)
-            if "TY  -" in head or "\nER" in head:
+            if f.lower().endswith(".bib") or head.lstrip().startswith("@"):
+                d = parse_bib(f)
+            elif "TY  -" in head or "\nER" in head:
                 d = parse_ris(f)
             else:
                 d = parse_tab(f)
             d = d[d["title"].fillna("").str.len() > 0]
+            # infere o bloco pelo nome do arquivo (wos_blocoA_* / wos_blocoB_*)
+            name = os.path.basename(f).lower()
+            if "blocob" in name or "block_b" in name or "blockb" in name:
+                d["block"] = "Irrigation_Decision"
+            elif "blocoa" in name or "block_a" in name or "blocka" in name:
+                d["block"] = "ETo_Software_Tools"
             frames.append(d[[c for c in UNIFIED_COLS if c in d.columns]])
             print(f"  + {os.path.basename(f):40s} {len(d):>6} registros")
         except Exception as e:

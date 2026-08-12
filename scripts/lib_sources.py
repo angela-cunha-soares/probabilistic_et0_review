@@ -17,8 +17,30 @@ from config import CONTACT_EMAIL
 UNIFIED_COLS = [
     "id", "source", "doi", "title", "abstract", "year", "venue",
     "authors", "institutions", "country_codes", "cited_by_count",
-    "is_oa", "oa_status", "issn", "keywords", "block",
+    "is_oa", "oa_status", "issn", "field", "doc_type", "keywords", "block",
 ]
+
+# Normaliza rótulos de tipo de documento (WoS Type, Scopus subtype, OpenAlex type)
+_NONARTICLE_TOKENS = {
+    "review": "Review", "proceedings": "Proceedings", "conference": "Proceedings",
+    "book chapter": "Book chapter", "editorial": "Editorial",
+    "correction": "Correction", "erratum": "Correction", "letter": "Letter",
+    "meeting abstract": "Meeting abstract", "note": "Note", "retracted": "Retracted",
+}
+
+
+def normalize_doctype(raw):
+    """Devolve um tipo padronizado. Qualquer combinação contendo um token de
+    não-artigo (ex.: 'Article; Proceedings Paper') vira o não-artigo."""
+    t = (raw or "").strip().lower()
+    if not t:
+        return ""
+    for tok, label in _NONARTICLE_TOKENS.items():
+        if tok in t:
+            return label
+    if "article" in t:
+        return "Article"
+    return raw.strip()
 
 
 # ----------------------------------------------------------------------

@@ -21,7 +21,11 @@ import pandas as pd
 from config import PROCESSED_DIR
 
 CORPUS = os.path.join(PROCESSED_DIR, "corpus_classified.csv")
-DECISIONS = os.path.join(PROCESSED_DIR, "decisions_99.csv")  # opcional
+# Decisões manuais a preservar entre recoletas. Prefere o arquivo completo
+# (decisions_manual.csv) se existir; senão usa o das 99 amostras.
+_manual = os.path.join(PROCESSED_DIR, "decisions_manual.csv")
+DECISIONS = _manual if os.path.exists(_manual) else os.path.join(
+    PROCESSED_DIR, "decisions_99.csv")
 
 # Sinais de ET0-específico / ferramenta (inclusão)
 ET0_SPECIFIC = ["penman-monteith", "penman monteith", "fao-56", "fao 56", "fao56",
@@ -75,18 +79,92 @@ def main():
     df["Include_Title_Abstract"] = ""
     df["Exclusion_Reason"] = ""
 
-    # aplica decisões manuais já tomadas (bloqueadas)
+    # aplica decisões manuais já tomadas — casando por id, DOI OU título
+    # normalizado (robusto a mudanças de representante entre re-fusões).
+    import re
+
+    def _norm(t):
+        return re.sub(r"[^a-z0-9]", "", re.sub(r"<[^>]+>", " ", str(t).lower()))
+
     n_locked = 0
     if os.path.exists(DECISIONS):
         dec = pd.read_csv(DECISIONS, dtype=str)
         inc = [c for c in dec.columns if "include" in c.lower()][0]
-        dec = dec[["id", inc]].rename(columns={inc: "manual"})
-        dec["manual"] = dec["manual"].fillna("").str.upper().str.strip()
-        df = df.merge(dec, on="id", how="left")
-        mask = df["manual"].isin(["S", "N"])
-        df.loc[mask, "Include_Title_Abstract"] = df.loc[mask, "manual"]
-        n_locked = int(mask.sum())
-        df.drop(columns="manual", inplace=True)
+        dec["d"] = dec[inc].fillna("").str.upper().str.strip()
+        dec = dec[dec["d"].isin(["S", "N"])]
+        dec["doi_l"] = dec.get("doi", "").fillna("").str.lower().str.strip()
+        dec["tk"] = dec.get("title", "").map(_norm)
+        by_id = dict(zip(dec["id"], dec["d"]))
+        by_doi = {k: v for k, v in zip(dec["doi_l"], dec["d"]) if k}
+        by_tk = {k: v for k, v in zip(dec["tk"], dec["d"]) if len(k) > 15}
+        df["doi_l"] = df["doi"].fillna("").str.lower().str.strip()
+        df["tk"] = df["title"].map(_norm)
+
+        def lookup(r):
+            return (by_id.get(r["id"]) or by_doi.get(r["doi_l"])
+                    or by_tk.get(r["tk"]) or "")
+        df["Include_Title_Abstract"] = df.apply(lookup, axis=1)
+        n_locked = int(df["Include_Title_Abstract"].isin(["S", "N"]).sum())
+        df.drop(columns=["doi_l", "tk"], inplace=True)
+
+    # exclusão automática por tipo de documento (identificado com segurança pelo
+    # WoS): reviews, proceedings, book chapters, editoriais, etc. — passo PRISMA
+    # documentado. Respeita decisões manuais já tomadas.
+    NONART = {"Review", "Proceedings", "Book chapter", "Editorial",
+              "Correction", "Letter", "Meeting abstract", "Note", "Retracted"}
+    if "doc_type" in df.columns:
+        na = df["doc_type"].isin(NONART) & (df["Include_Title_Abstract"] == "")
+        df.loc[na, "Include_Title_Abstract"] = "N"
+        df.loc[na, "Exclusion_Reason"] = "wrong doc type: " + df.loc[na, "doc_type"]
+        df.loc[na, "suggestion"] = "3-LIKELY_EXCLUDE"
+        print(f"[DocType] excluídos automaticamente (não-artigos WoS): {int(na.sum())}")
+
+    # exclusão por ESCOPO de periódico (revistas médicas), com salvaguarda para
+    # periódicos agrícolas/ambientais. Respeita decisões manuais.
+    try:
+        from config import MED_JOURNAL_TERMS, MED_SAFE_TERMS
+        v = df["venue"].fillna("")
+        medp = "|".join(re.escape(t) for t in MED_JOURNAL_TERMS)
+        safep = "|".join(re.escape(t) for t in MED_SAFE_TERMS)
+        med = (v.str.contains(medp, case=False, regex=True)
+               & ~v.str.contains(safep, case=False, regex=True)
+               & (df["Include_Title_Abstract"] == ""))
+        df.loc[med, "Include_Title_Abstract"] = "N"
+        df.loc[med, "Exclusion_Reason"] = "off-scope journal (medical)"
+        df.loc[med, "suggestion"] = "3-LIKELY_EXCLUDE"
+        print(f"[Journal] excluídos por revista médica/fora de escopo: {int(med.sum())}")
+    except Exception as e:
+        print("  [journal filter] pulado:", str(e)[:60])
+
+    # exclusão de PREPRINTS / repositórios (não revisados por pares)
+    try:
+        from config import PREPRINT_VENUE_TERMS
+        v = df["venue"].fillna("").str.lower()
+        prep = (v.str.contains("|".join(re.escape(t) for t in PREPRINT_VENUE_TERMS),
+                               regex=True) & (df["Include_Title_Abstract"] == ""))
+        df.loc[prep, "Include_Title_Abstract"] = "N"
+        df.loc[prep, "Exclusion_Reason"] = "preprint/repository (not peer-reviewed)"
+        df.loc[prep, "suggestion"] = "3-LIKELY_EXCLUDE"
+        print(f"[Preprint] excluídos (preprints/repositórios): {int(prep.sum())}")
+    except Exception as e:
+        print("  [preprint filter] pulado:", str(e)[:60])
+
+    # exclusão por REVISTA marcada manualmente em journals_review.csv (coluna Exclude)
+    jr = os.path.join(PROCESSED_DIR, "journals_review.csv")
+    if os.path.exists(jr):
+        jrev = pd.read_csv(jr, dtype=str)
+        if "Exclude" in jrev.columns:
+            def _vk(s):
+                return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9]", " ", str(s).lower())).strip()
+            excl = {_vk(x) for x, m in zip(jrev["venue"], jrev["Exclude"].fillna(""))
+                    if str(m).strip()}
+            if excl:
+                vk = df["venue"].map(_vk)
+                m = vk.isin(excl) & (df["Include_Title_Abstract"] == "")
+                df.loc[m, "Include_Title_Abstract"] = "N"
+                df.loc[m, "Exclusion_Reason"] = "off-scope journal (manual list)"
+                df.loc[m, "suggestion"] = "3-LIKELY_EXCLUDE"
+                print(f"[JournalList] excluídos por revista marcada: {int(m.sum())}")
 
     order = {"1-LIKELY_INCLUDE": 0, "2-REVIEW": 1, "3-LIKELY_EXCLUDE": 2}
     df["_o"] = df["suggestion"].map(order)
@@ -95,7 +173,8 @@ def main():
     cols = ["suggestion", "relevance", "relevance_reason",
             "Include_Title_Abstract", "Exclusion_Reason",
             "id", "doi", "title", "abstract", "keywords", "venue", "year",
-            "block", "tool_type", "method_class", "cited_by_count", "sources_found"]
+            "doc_type", "block", "tool_type", "method_class", "cited_by_count",
+            "sources_found"]
     cols = [c for c in cols if c in df.columns]
     out = os.path.join(PROCESSED_DIR, "full_screening.csv")
     df[cols].to_csv(out, index=False, encoding="utf-8-sig")

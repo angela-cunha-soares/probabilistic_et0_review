@@ -3,7 +3,10 @@
 Pipeline **100% Python** (sem R) para uma revisão bibliométrica sistemática, guiada
 por PRISMA, do software, aplicativos e ferramentas online que **calculam ET₀**, e de
 **como** eles produzem estimativas — de forma **determinística** ou **não-determinística**.
-Revista-alvo: *Environmental Modelling & Software* (Elsevier). Tipo: **Review paper**.
+Revista-alvo: *Computers and Electronics in Agriculture* (Elsevier). Tipo: **Review paper**.
+
+**Bases (triangulação):** OpenAlex (API), Scopus (API Elsevier), Web of Science
+(exportação manual `.bib`) e IEEE Xplore (exportação manual CSV).
 
 Este README ensina, do zero, como instalar, configurar e rodar o projeto.
 
@@ -131,7 +134,9 @@ Se preferir rodar passo a passo:
 ```bash
 python scripts/00_collect_openalex.py     # 1. coleta OpenAlex (grátis)
 python scripts/01_collect_scopus.py       # 2. coleta Scopus (precisa da chave)
+python scripts/02_collect_ieee.py         # 2b. coleta IEEE Xplore via API (precisa da chave)
 python scripts/11_ingest_wos_export.py    # 3. ingere export da WoS (se houver)
+python scripts/17_ingest_ieee_export.py   # 3b. IEEE via export manual (alternativa à API)
 python scripts/04_merge_dedup_prisma.py   # 4. funde + deduplica + PRISMA
 python scripts/05_bibliometric_analysis.py# 5. tabelas (países, instituições, OA, método, tipo)
 python scripts/12_journal_metrics.py      # 6. métricas de periódico (impacto)
@@ -155,6 +160,33 @@ alternativa padrão é exportar da plataforma web (ver **`WOS_EXPORT_GUIDE.md`**
 2. **Export → Tab delimited** (ou RIS/BibTeX), registro **"Full Record"** (até 1.000 por vez).
 3. Salve os arquivos em `data/raw/wos_export/`.
 4. Rode `python scripts/11_ingest_wos_export.py` e depois o merge.
+
+---
+
+## 7b. IEEE Xplore (base de engenharia/IA)
+
+Cobre métodos de IA/ML. **Dois caminhos** — prefira a API:
+
+**(A) Via API (recomendado)** — Metadata Search API, chave gratuita registrada em
+<https://developer.ieee.org/>:
+
+```bash
+setx IEEE_API_KEY "sua_chave"     # PowerShell; feche e reabra o terminal
+python scripts/02_collect_ieee.py # coleta Blocos A e B -> ieee_raw.csv
+```
+
+Limite: 200 chamadas/dia (o script tem checkpoint e retoma de onde parou). A chave
+recém-criada fica "waiting" por algumas horas/dias antes de ativar.
+
+**(B) Via exportação manual** (alternativa, ver **`IEEE_EXPORT_GUIDE.md`**):
+
+1. Rode as queries dos Blocos A e B (no guia) no **Command Search** do IEEE Xplore.
+2. **Export → Citations → CSV**, opção **"Citation and Abstract"** (em lotes).
+3. Salve os CSV em `data/raw/ieee_export/` (nomeie com `blocoA`/`blocoB`).
+4. Rode `python scripts/17_ingest_ieee_export.py` e depois o merge.
+
+Registros de **conferência** IEEE entram no corpus mas são auto-excluídos na
+triagem (passo PRISMA, motivo "wrong doc type"), como as demais não-artigos.
 
 ---
 

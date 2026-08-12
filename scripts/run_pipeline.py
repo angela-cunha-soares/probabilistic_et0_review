@@ -53,6 +53,8 @@ def main():
     if do_reset:
         reset_raw()
 
+    run("16_export_search_terms.py")           # atualiza SEARCH_TERMS.md a partir do config
+
     if do_collect:
         run("00_collect_openalex.py")          # OpenAlex (gratuito)
         run("01_collect_scopus.py")            # Scopus (precisa SCOPUS_API_KEY)

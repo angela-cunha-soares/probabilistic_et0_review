@@ -1,5 +1,5 @@
 Method_class,Documents,Percentage (%)
-Deterministic,2266,59.41
-Non-deterministic,538,14.11
-Hybrid (both),416,10.91
-Unclassified,594,15.57
+Deterministic,2444,37.92
+Non-deterministic,1744,27.06
+Hybrid (both),1227,19.04
+Unclassified,1030,15.98

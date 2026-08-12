@@ -102,6 +102,7 @@ def _parse_entry(e, block_name):
         "is_oa": bool(e.get("openaccessFlag", False)),
         "oa_status": "gold" if str(e.get("openaccess", "0")) == "1" else "",
         "issn": e.get("prism:issn", "") or e.get("prism:eIssn", "") or "",
+        "field": "",  # OpenAlex fornece 'field'; Scopus não no retorno da busca
         "keywords": kw,
         "block": block_name,
     }

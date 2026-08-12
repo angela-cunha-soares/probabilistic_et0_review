@@ -31,7 +31,8 @@ def norm_title(t):
 def load_all():
     frames = []
     patterns = ["openalex_block*.csv", "openalex_raw.csv", "scopus_raw.csv",
-                "wos_raw.csv", "crossref_raw.csv", "semanticscholar_raw.csv"]
+                "wos_raw.csv", "ieee_raw.csv", "crossref_raw.csv",
+                "semanticscholar_raw.csv"]
     for pat in patterns:
         for fp in sorted(glob.glob(os.path.join(RAW_DIR, pat))):
             try:
@@ -53,29 +54,67 @@ def main():
 
     df["doi"] = df["doi"].fillna("").astype(str).str.lower().str.strip()
     df["title_key"] = df["title"].map(norm_title)
+    # chave de título "estrita": só letras/números (ignora espaços e pontuação),
+    # captura variantes como "LANDS AT" vs "LANDSAT", "ET0" vs "ET 0".
+    df["title_strict"] = df["title"].fillna("").str.lower().map(
+        lambda t: re.sub(r"[^a-z0-9]", "", re.sub(r"<[^>]+>", " ", t)))
 
-    # chave de deduplicação:
-    #   - usa o TÍTULO normalizado quando ele é suficientemente longo
-    #     (colapsa versões do mesmo artigo com DOIs diferentes: preprint,
-    #     Zenodo, versão do editor). Datasets/errata têm títulos distintos,
-    #     então não são fundidos indevidamente.
-    #   - títulos curtos/ausentes caem no DOI.
-    df["dedup_key"] = df.apply(
-        lambda r: r["title_key"] if len(r["title_key"]) >= 20
-        else (r["doi"] or r["title_key"]), axis=1)
-    df = df[df["dedup_key"] != ""]
+    df = df.reset_index(drop=True)
 
-    # proveniência: bases que contêm cada documento
-    prov = (df.groupby("dedup_key")["source"]
+    # ---- deduplicação por UNIÃO: mesmo DOI OU mesmo título estrito ----
+    # (antes: dedup só por título deixava passar mesmo-DOI/título-diferente)
+    parent = list(range(len(df)))
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a, b):
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[max(ra, rb)] = min(ra, rb)
+
+    for key, min_len in (("doi", 1), ("title_strict", 16)):
+        for val, idx in df.groupby(key).groups.items():
+            if not isinstance(val, str) or len(val) < min_len:
+                continue
+            idx = list(idx)
+            for j in idx[1:]:
+                union(idx[0], j)
+    df["cluster"] = [find(i) for i in range(len(df))]
+    df = df[(df["doi"] != "") | (df["title_key"] != "")]
+
+    # proveniência: bases que contêm cada documento (por cluster)
+    prov = (df.groupby("cluster")["source"]
               .apply(lambda s: ";".join(sorted(set(s)))).rename("sources_found"))
 
-    # ao escolher o representante de cada grupo, prefere:
-    #   (1) DOI de periódico (não-Zenodo)  (2) maior abstract
+    # tipo de documento: propaga o valor confiável do WoS para todo o cluster
+    if "doc_type" not in df.columns:
+        df["doc_type"] = ""
+    dtype = (df.groupby("cluster")["doc_type"]
+               .apply(lambda s: next((x for x in s
+                                      if isinstance(x, str) and x.strip()), ""))
+               .rename("doc_type_c"))
+
+    # representante de cada cluster: prefere DOI de periódico e maior abstract
     df["abs_len"] = df["abstract"].fillna("").astype(str).str.len()
     df["is_journal"] = (~df["doi"].str.startswith("10.5281")) & (df["doi"] != "")
     df = df.sort_values(["is_journal", "abs_len"], ascending=[False, False])
-    dedup = df.drop_duplicates(subset="dedup_key", keep="first").copy()
-    dedup = dedup.merge(prov, on="dedup_key", how="left")
+    dedup = df.drop_duplicates(subset="cluster", keep="first").copy()
+    dedup = dedup.merge(prov, on="cluster", how="left")
+    dedup = dedup.merge(dtype, on="cluster", how="left")
+    dedup["doc_type"] = dedup["doc_type_c"].fillna("")
+
+    # canonicaliza a CAIXA do nome do periódico (WoS exporta em CAIXA ALTA;
+    # junta "REMOTE SENSING" com "Remote Sensing" usando a forma mais comum)
+    vk = (dedup["venue"].fillna("").str.lower()
+          .str.replace(r"[^a-z0-9]", " ", regex=True).str.replace(r"\s+", " ", regex=True)
+          .str.strip())
+    canon = dedup.assign(_vk=vk).groupby("_vk")["venue"].transform(
+        lambda s: s.mode().iloc[0] if not s.mode().empty else s.iloc[0])
+    dedup["venue"] = canon.where(vk != "", dedup["venue"])
     n_unique = len(dedup)
 
     # ---- PRISMA: identificação -> remoção de duplicatas -> triagem ----
@@ -97,7 +136,7 @@ def main():
         index=False, encoding="utf-8")
 
     # contagens PRISMA
-    per_source = df.groupby("source")["dedup_key"].nunique()
+    per_source = df.groupby("source")["cluster"].nunique()
     prisma = pd.DataFrame({
         "Stage": ["Records identified (raw, all sources)",
                   "Records after duplicate removal (unique)",

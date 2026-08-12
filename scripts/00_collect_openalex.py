@@ -57,6 +57,8 @@ def collect_block(block, time_budget=None, start_cursor="*", sink=None):
             venue = src.get("display_name", "")
             issn = src.get("issn_l", "") or (src.get("issn") or [""])[0]
             oa = w.get("open_access", {}) or {}
+            field = (((w.get("primary_topic") or {}).get("field") or {})
+                     .get("display_name", ""))
             page_rows.append({
                 "id": w.get("id"),
                 "source": "openalex",
@@ -72,6 +74,7 @@ def collect_block(block, time_budget=None, start_cursor="*", sink=None):
                 "is_oa": oa.get("is_oa", ""),
                 "oa_status": oa.get("oa_status", ""),
                 "issn": issn,
+                "field": field,
                 "keywords": kws,
                 "block": block["name"],
             })

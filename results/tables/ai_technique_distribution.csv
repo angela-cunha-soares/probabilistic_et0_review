@@ -1,0 +1,11 @@
+AI_technique,Documents,Percentage (%)
+Deep learning,315,10.6
+Support vector machine,261,8.78
+Tree ensembles (RF/boosting),389,13.09
+Neuro-fuzzy / fuzzy,121,4.07
+Genetic / evolutionary / swarm,98,3.3
+Gaussian process / kernel,10,0.34
+Reinforcement learning,1,0.03
+Artificial neural network (ANN),586,19.72
+Machine learning (general),287,9.66
+Other AI / unspecified,903,30.39

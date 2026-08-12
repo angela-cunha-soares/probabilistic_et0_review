@@ -17,7 +17,7 @@ import pandas as pd
 
 from config import (PROCESSED_DIR, TABLES_DIR, YEAR_MIN, YEAR_MAX,
                     CONTACT_EMAIL, MACRO_DETERMINISTIC, MACRO_PROBABILISTIC,
-                    DET_METHODS, NONDET_METHODS, TOOL_TYPE_TAXONOMY)
+                    DET_METHODS, NONDET_METHODS, TOOL_TYPE_TAXONOMY, AI_TECHNIQUES)
 from lib_sources import http_get_json
 
 CORPUS = os.path.join(PROCESSED_DIR, "corpus_unified.csv")
@@ -213,6 +213,49 @@ def classify_tool_type(df):
     return df
 
 
+def top_fields(df):
+    """Categorias de assunto (field do OpenAlex), como a Table 1 de Skhiri et al."""
+    if "field" not in df.columns:
+        return
+    f = df["field"].dropna().astype(str).str.strip()
+    f = f[f != ""]
+    if f.empty:
+        return
+    out = f.value_counts().head(12).reset_index()
+    out.columns = ["Subject_field", "Documents"]
+    out["Percentage (%)"] = (out["Documents"] /
+                             int((df["field"].fillna("") != "").sum()) * 100).round(2)
+    out.to_csv(os.path.join(TABLES_DIR, "subject_categories.csv"), index=False)
+
+
+def classify_ai_techniques(df):
+    """Distribui os documentos não-determinísticos por TÉCNICA de IA (Fig.10 Skhiri).
+    Escolhe a técnica com mais evidência textual (empate -> ordem da taxonomia)."""
+    if "method_class" not in df.columns:
+        return
+    sub = df[df["method_class"].isin(["Non-deterministic", "Hybrid (both)"])].copy()
+    if sub.empty:
+        return
+    text = (sub["title"].fillna("") + " " + sub["abstract"].fillna("") + " " +
+            sub["keywords"].fillna("")).str.lower()
+
+    def assign(t):
+        best, score, rank = "Other AI / unspecified", 0, 99
+        for r, (label, terms) in enumerate(AI_TECHNIQUES):
+            sc = sum(1 for term in terms if term in t)
+            if sc > score or (sc == score and sc > 0 and r < rank):
+                best, score, rank = label, sc, r
+        return best
+    sub["ai_technique"] = text.map(assign)
+    order = [lbl for lbl, _ in AI_TECHNIQUES] + ["Other AI / unspecified"]
+    counts = (sub["ai_technique"].value_counts().reindex(order).fillna(0).astype(int)
+              .rename_axis("AI_technique").reset_index(name="Documents"))
+    counts["Percentage (%)"] = (counts["Documents"] / len(sub) * 100).round(2)
+    counts.to_csv(os.path.join(TABLES_DIR, "ai_technique_distribution.csv"), index=False)
+    print("[AI] " + " | ".join(f"{r.AI_technique.split(' /')[0].split(' (')[0]}={r.Documents}"
+                               for r in counts.itertuples() if r.Documents > 0))
+
+
 def macro_contrast():
     """Gap 1 quantificado via contagem OpenAlex (determinístico vs probabilístico)."""
     def count(search):
@@ -243,9 +286,11 @@ def main():
     top_journals(df)
     top_countries(df)
     top_institutions(df)
+    top_fields(df)
     top_keywords(df)
     mine_teleconnections(df)
     df = classify_methods(df)
+    classify_ai_techniques(df)
     df = classify_tool_type(df)
     open_access_summary(df)
     # salva corpus anotado com classe de método E tipo de ferramenta

@@ -1,4 +1,8 @@
 sources,unique_documents
-openalex;scopus,1694
-openalex,1602
-scopus,518
+openalex;scopus;wos,2649
+openalex,2087
+openalex;scopus,598
+scopus,460
+wos,364
+scopus;wos,219
+openalex;wos,68

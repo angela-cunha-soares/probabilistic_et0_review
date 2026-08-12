@@ -81,10 +81,43 @@ def fig_journals_impact():
     plt.close()
 
 
+def fig_ai_techniques():
+    df = _read("ai_technique_distribution.csv")
+    if df is None or df.empty:
+        return
+    df = df[df["Documents"] > 0].sort_values("Documents")
+    plt.figure(figsize=(11, 6))
+    sns.barplot(data=df, x="Documents", y="AI_technique", color="#d62728", width=0.65)
+    for i, (v, p) in enumerate(zip(df["Documents"], df["Percentage (%)"])):
+        plt.text(v, i, f" {v} ({p:.0f}%)", va="center", fontsize=9)
+    plt.title("AI techniques among non-deterministic ET₀ studies",
+              fontweight="bold", pad=15)
+    plt.xlabel("Documents"); plt.ylabel(""); sns.despine(); plt.tight_layout()
+    plt.savefig(os.path.join(FIGURES_DIR, "fig19_ai_techniques.png"),
+                dpi=300, bbox_inches="tight")
+    plt.close()
+
+
+def fig_subject_categories():
+    df = _read("subject_categories.csv")
+    if df is None or df.empty:
+        return
+    df = df.sort_values("Documents")
+    plt.figure(figsize=(11, 6))
+    sns.barplot(data=df, x="Documents", y="Subject_field", color="#6a51a3", width=0.65)
+    plt.title("Subject fields of the corpus (OpenAlex)", fontweight="bold", pad=15)
+    plt.xlabel("Documents"); plt.ylabel(""); sns.despine(); plt.tight_layout()
+    plt.savefig(os.path.join(FIGURES_DIR, "fig20_subject_categories.png"),
+                dpi=300, bbox_inches="tight")
+    plt.close()
+
+
 def main():
     fig_institutions()
     fig_open_access()
     fig_journals_impact()
+    fig_ai_techniques()
+    fig_subject_categories()
     print(f"[OK] Figuras de metadados em {FIGURES_DIR}")
 
 

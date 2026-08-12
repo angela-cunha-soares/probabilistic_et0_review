@@ -1,108 +1,173 @@
 venue,corpus_docs,impact_2yr_mean_citedness,h_index,works_count,is_in_doaj
-Remote Sensing,79,,,,
-Agricultural Water Management,78,,,,
-Journal of Hydrology,69,,,,
-Remote Sensing,60,4.544,271.0,42638.0,True
-Agricultural and Forest Meteorology,52,,,,
-Water Switzerland,42,,,,
-Remote Sensing of Environment,41,,,,
-SSRN Electronic Journal,39,0.207,452.0,1645742.0,False
-Irrigation Science,37,,,,
-Proceedings of SPIE the International Society for Optical Engineering,36,,,,
-International Journal of Remote Sensing,31,,,,
-Agricultural Water Management,29,6.709,211.0,10416.0,True
-Water,24,3.987,170.0,32180.0,False
-"Proceedings of SPIE, the International Society for Optical Engineering/Proceedings of SPIE",23,0.0,236.0,436477.0,False
-Nongye Gongcheng Xuebao Transactions of the Chinese Society of Agricultural Engineering,23,,,,
-Acta Horticulturae,22,,,,
-IAHS AISH Publication,20,,,,
-Journal of Climate,19,2.476,418.0,14036.0,False
+Journal of Hydrology,181,,,,
+Agricultural Water Management,146,,,,
+Remote Sensing,105,,,,
+SSRN Electronic Journal,105,0.207,452.0,1648099.0,False
+Agricultural and Forest Meteorology,92,,,,
+Water Switzerland,76,,,,
+Remote Sensing,73,4.565,271.0,42658.0,True
+Computers and Electronics in Agriculture,64,,,,
+Remote Sensing of Environment,58,,,,
+Theoretical and Applied Climatology,51,,,,
+Irrigation Science,51,,,,
+Agricultural Water Management,49,6.754,211.0,10421.0,True
+Water Resources Management,44,,,,
+Nongye Gongcheng Xuebao Transactions of the Chinese Society of Agricultural Engineering,44,,,,
+Water Resources Research,36,,,,
+International Journal of Remote Sensing,36,,,,
+Proceedings of SPIE the International Society for Optical Engineering,35,,,,
+Hydrology and Earth System Sciences,32,,,,
+Water,32,3.998,170.0,32219.0,False
+Journal of Irrigation and Drainage Engineering,32,,,,
+Agronomy,32,,,,
+Science of the Total Environment,31,,,,
+Journal of Hydrology Regional Studies,26,,,,
+Acta Horticulturae,25,,,,
+Hydrological Processes,25,2.599,231.0,11403.0,False
+Water Resources Research,24,6.464,424.0,23413.0,True
+Hydrological Processes,24,,,,
+IAHS AISH Publication,22,,,,
+Journal of Irrigation and Drainage Engineering,22,1.211,109.0,4333.0,False
+"Proceedings of SPIE, the International Society for Optical Engineering/Proceedings of SPIE",22,0.0,236.0,436477.0,False
+Hydrology and earth system sciences,21,6.663,229.0,6209.0,True
+Journal of Hydrology,21,6.979,363.0,29604.0,False
+Sustainability Switzerland,19,,,,
 Journal of Climate,19,,,,
-Science of the Total Environment,19,,,,
-Hydrology and Earth System Sciences,19,,,,
-Water Resources Research,17,,,,
-Journal of Hydrology,16,6.953,362.0,29581.0,False
-Hydrological Processes,16,2.588,231.0,11401.0,False
-Journal of Irrigation and Drainage Engineering,15,,,,
-Theoretical and Applied Climatology,15,,,,
-Agronomy,14,,,,
+Journal of Hydrology Regional Studies,19,2.849,81.0,3768.0,True
+Journal of Irrigation and Drainage,18,,,,
+Journal of Climate,18,2.485,418.0,14036.0,False
+Hydrological Sciences Journal,18,,,,
+Agriculture Switzerland,18,,,,
+Water Saving Irrigation,18,,,,
+Nongye Jixie Xuebao Transactions of the Chinese Society for Agricultural Machinery,17,,,,
+Atmosphere,17,,,,
+Applied Water Science,16,,,,
+Lecture Notes in Networks and Systems,16,,,,
+Irrigation and Drainage,16,,,,
+International Geoscience and Remote Sensing Symposium IGARSS,15,,,,
+Environmental Modelling and Software,15,,,,
+Scientific Reports,15,4.71,461.0,305854.0,True
+Journal of Hydrometeorology,15,1.971,186.0,3082.0,False
+Journal of Hydrometeorology,15,,,,
+Hydrological Sciences Journal,14,2.88,151.0,5105.0,False
+Agricultural and Forest Meteorology,14,5.438,257.0,9797.0,False
+Journal of Water and Climate Change,14,,,,
+International Journal of Environment and Climate Change,14,1.027,25.0,5265.0,False
+Journal of the Indian Society of Remote Sensing,14,,,,
+Transactions of the ASABE,14,0.0,92.0,3176.0,False
+Journal of Geophysical Research Atmospheres,14,2.994,663.0,99025.0,False
 International Journal of Applied Earth Observation and Geoinformation,14,,,,
-Transactions of the ASABE,13,0.0,92.0,3176.0,False
-Hydrology and earth system sciences,13,6.596,229.0,6206.0,True
-Hydrological Processes,13,,,,
-Journal of Hydrometeorology,12,,,,
-International Journal of Environment and Climate Change,12,1.026,25.0,5258.0,False
-Journal of the Indian Society of Remote Sensing,12,,,,
-Environmental Modelling and Software,11,,,,
-Remote Sensing of Environment,11,10.401,455.0,11953.0,False
-Agricultural and Forest Meteorology,11,5.426,257.0,9790.0,False
-Water Resources Management,10,,,,
-Shengtai Xuebao,10,,,,
-Computers and Electronics in Agriculture,10,,,,
-International Journal of Remote Sensing,10,2.559,267.0,14899.0,False
+Atmosphere,13,3.196,107.0,12745.0,True
+Irriga,13,,,,
+Shengtai Xuebao,12,,,,
+Scientific Reports,12,,,,
+Lecture Notes in Civil Engineering,12,,,,
+Plos One,12,,,,
+Atmospheric Research,12,,,,
+Environmental Monitoring and Assessment,12,,,,
+Stochastic Environmental Research and Risk Assessment,11,,,,
+Remote Sensing of Environment,11,10.432,455.0,11960.0,False
+Earth Science Informatics,11,,,,
+Chinese Journal of Agrometeorology,11,,,,
+Environmental Science and Pollution Research,11,,,,
+Agronomy,11,4.613,166.0,19891.0,True
+Journal of Agricultural Engineering (India),11,0.836,14.0,1237.0,False
+Environmental Research Letters,11,4.362,262.0,10042.0,True
+Hydrology,11,2.859,59.0,1805.0,True
+Agricultural Engineering International Cigr Journal,10,,,,
+Geophysical Research Letters,10,4.348,430.0,53157.0,True
+Sustainability,10,5.071,297.0,107837.0,False
+Paddy and Water Environment,10,,,,
+Shuikexue Jinzhan Advances in Water Science,10,,,,
+IFIP Advances in Information and Communication Technology,10,,,,
+Hydrology Research,10,,,,
+ISPRS Journal of Photogrammetry and Remote Sensing,10,,,,
 Climate Dynamics,10,,,,
-Water Resources Research,10,6.433,424.0,23401.0,True
-Irrigation and Drainage,10,,,,
-Journal of Geophysical Research Atmospheres,10,2.983,663.0,99017.0,False
-Irriga,10,,,,
-Lecture Notes in Civil Engineering,9,,,,
-Sustainability Switzerland,9,,,,
-International Journal of Research in Agronomy,8,0.152,9.0,6599.0,False
-Atmosphere,8,,,,
-IOP Conference Series Earth and Environmental Science,8,0.563,76.0,124692.0,False
-Agriculture Switzerland,8,,,,
-Journal of the American Water Resources Association,8,,,,
-Journal of Hydrometeorology,8,1.964,186.0,3081.0,False
-Journal of Applied Remote Sensing,8,,,,
-Agronomy Journal,8,1.743,236.0,25575.0,False
-ISPRS Journal of Photogrammetry and Remote Sensing,8,,,,
-Journal of Applied Remote Sensing,8,1.321,77.0,3664.0,False
-Sustainability,7,5.05,297.0,107723.0,False
-Arabian Journal of Geosciences,7,,,,
-Agricultural Engineering International Cigr Journal,7,,,,
-Ecohydrology,7,2.03,92.0,2181.0,False
-Geophysical Research Letters,7,4.331,429.0,53137.0,True
-Scientific Reports,7,4.692,461.0,305418.0,True
-Journal of Irrigation and Drainage,7,,,,
-"The international archives of the photogrammetry, remote sensing and spatial information sciences/International archives of the photogrammetry, remote sensing and spatial information sciences",7,0.893,84.0,16172.0,True
-Water Saving Irrigation,7,,,,
-Journal of Geophysical Research Atmospheres,7,,,,
-Journal of Hydrology Regional Studies,7,2.858,81.0,3751.0,True
-Irrigation and Drainage,7,1.66,61.0,2897.0,False
-Journal of Agrometeorology,7,,,,
-Journal of Irrigation and Drainage Engineering,7,1.207,109.0,4332.0,False
-Nongye Jixie Xuebao Transactions of the Chinese Society for Agricultural Machinery,7,,,,
-Journal of Water and Climate Change,7,,,,
-Paddy and Water Environment,7,,,,
+Shuili Xuebao Journal of Hydraulic Engineering,9,,,,
+"The international archives of the photogrammetry, remote sensing and spatial information sciences/International archives of the photogrammetry, remote sensing and spatial information sciences",9,0.9,84.0,16172.0,True
+International Journal of Climatology,9,2.754,244.0,9738.0,False
+IOP Conference Series Earth and Environmental Science,9,0.565,76.0,124692.0,False
+International Journal of Climatology,9,,,,
+Journal of Agrometeorology,9,,,,
+Journal of Agrometeorology,9,1.078,22.0,1758.0,True
+Journal of Applied Remote Sensing,9,,,,
+IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing,9,4.544,163.0,12283.0,True
+Advances in Water Resources,9,,,,
+Ecohydrology,9,2.041,92.0,2181.0,False
+Modeling Earth Systems and Environment,9,,,,
+Agronomy Journal,8,1.758,236.0,25577.0,False
+Ecological Indicators,8,8.871,242.0,15229.0,True
+Aip Conference Proceedings,8,,,,
+Environment and Water Engineering,8,,,,
+Arabian Journal of Geosciences,8,,,,
+Journal of Geophysical Research Atmospheres,8,,,,
+Journal of Water and Climate Change,8,4.357,57.0,1994.0,True
+Water Practice and Technology,8,,,,
+Water and Soil Management and Modeling,8,,,,
+Paiguan Jixie Gongcheng Xuebao Journal of Drainage and Irrigation Machinery Engineering,8,,,,
+Remote Sensing Technology and Application,8,,,,
+Ecological Indicators,8,,,,
+Hydrology,8,,,,
+International Journal of Research in Agronomy,8,0.152,9.0,6661.0,False
+Journal of Arid Environments,8,,,,
+Irrigation and Drainage,8,1.669,61.0,2900.0,False
+Journal of Applied Remote Sensing,8,1.327,77.0,3664.0,False
+JWSS - Isfahan University of Technology,8,0.063,13.0,3341.0,False
+Physics and Chemistry of the Earth,8,,,,
+International Journal of Remote Sensing,7,2.555,267.0,14906.0,False
 Remote Sensing Applications Society and Environment,7,,,,
-Shuikexue Jinzhan Advances in Water Science,7,,,,
+Water science and technology library,7,1.543,73.0,2783.0,False
+Neural Computing and Applications,7,,,,
+Journal of the American Water Resources Association,7,,,,
+Journal of Hydrologic Engineering,7,,,,
+Environmental Earth Sciences,7,,,,
+Acta Geophysica,7,,,,
+Hydrology Research,7,,,,
 Yaogan jishu yu yingyong,7,0.0,16.0,2200.0,True
+Jieshui guan'gai,7,0.0,5.0,1389.0,True
+Journal of Hydrologic Engineering,7,2.428,123.0,3594.0,False
+Journal of Environmental Management,7,,,,
 Watershed Engineering and Management,6,,,,
-Journal of Arid Environments,6,,,,
-Water science and technology library,6,1.543,73.0,2783.0,False
+Water Resources Protection,6,,,,
+Proceedings of the IAHR World Congress,6,,,,
+Journal of Irrigation and Drainage,6,0.0,8.0,1840.0,True
+Arabian Journal of Geosciences,6,1.831,104.0,12383.0,False
+Climate Dynamics,6,2.741,245.0,9328.0,False
+Agronomy Journal,6,,,,
+Applied Sciences Switzerland,6,,,,
+Ecohydrology,6,,,,
+Journal of Soil and Water Conservation,6,0.083,13.0,550.0,False
+Journal of Physics Conference Series,6,0.472,133.0,218676.0,False
 Revista De Teledeteccion,6,,,,
-Journal of Water and Soil Science,6,0.056,9.0,939.0,True
-IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing,6,4.541,163.0,12264.0,True
-Hydrological Sciences Journal,6,2.866,151.0,5104.0,False
-Atmospheric Research,6,,,,
-Atmosphere,6,3.188,107.0,12731.0,True
-Agronomy,6,4.594,166.0,19863.0,True
-Hydrology,6,2.849,59.0,1801.0,True
-International Journal of Current Microbiology and Applied Sciences,6,3.823,56.0,24071.0,False
-Advances in Water Resources,5,,,,
-International Journal of Applied Earth Observation and Geoinformation,5,4.914,168.0,5590.0,True
-International Journal of Climatology,5,2.741,244.0,9736.0,False
-Hydrological Sciences Journal,5,,,,
-Arabian Journal of Geosciences,5,1.825,104.0,12382.0,False
-Climate Dynamics,5,2.732,245.0,9324.0,False
-Aip Conference Proceedings,5,,,,
-Environmental Earth Sciences,5,,,,
-Environmental Monitoring and Assessment,5,,,,
-Journal of Hydrology Regional Studies,5,,,,
-Irriga,5,0.081,23.0,1988.0,False
-Journal of Agrometeorology,5,1.078,22.0,1758.0,True
+IEEE Transactions on Geoscience and Remote Sensing,6,6.19,382.0,27130.0,False
+International Journal of Current Microbiology and Applied Sciences,6,3.662,56.0,24107.0,False
+Indian Journal of Ecology,6,,,,
+Environmental Processes,5,,,,
+Earth Systems and Environment,5,,,,
+Environment Development and Sustainability,5,,,,
+China Rural Water and Hydropower,5,0.0,6.0,2476.0,True
+Earth Systems and Environment,5,3.799,59.0,1294.0,False
+Frontiers in Environmental Science,5,4.518,128.0,8322.0,True
+Field Crops Research,5,,,,
+European Journal of Agronomy,5,,,,
+Geocarto International,5,,,,
+IEEE Access,5,5.629,369.0,110576.0,True
+Hydrology research,5,3.341,79.0,2445.0,True
+International Journal of Applied Earth Observation and Geoinformation,5,4.912,168.0,5601.0,True
+INTERNATIONAL JOURNAL OF AGRICULTURAL ENGINEERING,5,0.0,11.0,846.0,False
+Journal of Geophysical Research Biogeosciences,5,,,,
+Irriga,5,0.079,23.0,1989.0,False
+JAWRA Journal of the American Water Resources Association,5,1.938,165.0,8614.0,False
 Revista Brasileira De Meteorologia,5,,,,
-SoftwareX,5,1.986,68.0,2460.0,True
-Scientific investigations report,5,0.914,68.0,4844.0,False
-Water and Soil Management and Modeling,5,,,,
+Journal of Scientific Research and Reports,5,0.639,33.0,4149.0,False
+Journal of The Korean Society of Agricultural Engineers,5,0.0,15.0,1186.0,False
+Precision Agriculture,5,,,,
+PLoS ONE,5,2.977,600.0,342323.0,True
+Revista Brasileira de Meteorologia,5,0.878,35.0,947.0,True
+Smart Agricultural Technology,5,,,,
+SoftwareX,5,1.997,68.0,2462.0,True
+Sensors,5,,,,
+Sensors,5,4.893,333.0,80347.0,True
+Scientific investigations report,5,0.909,68.0,4846.0,False
+Shuitu baochi yanjiu,5,0.0,10.0,4401.0,True
 Zhongguo nongye qixiang,5,0.0,9.0,1025.0,False
