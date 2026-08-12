@@ -39,3 +39,11 @@ data/processed/*.csv
 # úteis como evidência da estratégia de busca).
 # ---------------------------------------------------------------------------
 results/figures/*.html
+
+# ---------------------------------------------------------------------------
+# Ignore TODOS os .md (exceto README.md) e
+# TODOS os .tex. Ficam apenas no disco local, fora do controle de versão.
+# ---------------------------------------------------------------------------
+*.md
+!README.md
+*.tex
